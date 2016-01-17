@@ -25,7 +25,8 @@
   },
   "dependencies": {
     "invariant": "^2.2.0",
-    "marsdb": "^0.5.4"
+    "marsdb": "^0.5.4",
+    "mongodb": "^2.1.4"
   },
   "devDependencies": {
     "core-js": "^2.0.0",
