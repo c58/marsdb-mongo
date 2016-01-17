@@ -31,7 +31,8 @@ var MongoCollectionDelegate = (function () {
       var options = arguments.length <= 1 || arguments[1] === undefined ? {} : arguments[1];
 
       return (0, _index.getDb)().then(function (db) {
-        return db.collection(_this.modelName).insert(doc, options);
+        var coll = db.collection(_this.modelName);
+        return coll.insert(doc, options);
       }).then(function (res) {
         return doc._id;
       });
@@ -44,8 +45,9 @@ var MongoCollectionDelegate = (function () {
       var options = arguments.length <= 1 || arguments[1] === undefined ? {} : arguments[1];
 
       return (0, _index.getDb)().then(function (db) {
-        return db.find(query).toArray().then(function (docs) {
-          return db.collection(_this2.modelName).deleteMany(query, options).then(function () {
+        var coll = db.collection(_this2.modelName);
+        return coll.find(query).toArray().then(function (docs) {
+          return coll.deleteMany(query, options).then(function () {
             return docs;
           });
         });
@@ -59,9 +61,10 @@ var MongoCollectionDelegate = (function () {
       var options = arguments.length <= 2 || arguments[2] === undefined ? {} : arguments[2];
 
       return (0, _index.getDb)().then(function (db) {
-        return db.find(query).toArray().then(function (original) {
-          return db.collection(_this3.modelName).updateMany(query, modifier, options).then(function (res) {
-            return db.find(query).toArray().then(function (updated) {
+        var coll = db.collection(_this3.modelName);
+        return coll.find(query).toArray().then(function (original) {
+          return coll.updateMany(query, modifier, options).then(function (res) {
+            return coll.find(query).toArray().then(function (updated) {
               return {
                 modified: res.modifiedCount,
                 original: original,
@@ -75,30 +78,36 @@ var MongoCollectionDelegate = (function () {
   }, {
     key: 'find',
     value: function find(query) {
-      // TODO
-
       var options = arguments.length <= 1 || arguments[1] === undefined ? {} : arguments[1];
+
+      return new this.db.cursorClass(this.db, query, options);
     }
   }, {
     key: 'findOne',
-    value: function findOne(query, sortObj) {
-      // TODO
+    value: function findOne(query) {
+      var options = arguments.length <= 1 || arguments[1] === undefined ? {} : arguments[1];
 
-      var options = arguments.length <= 2 || arguments[2] === undefined ? {} : arguments[2];
+      return this.find(query, options).aggregate(function (docs) {
+        return docs[0];
+      }).limit(1);
     }
   }, {
     key: 'count',
     value: function count(query) {
-      // TODO
-
       var options = arguments.length <= 1 || arguments[1] === undefined ? {} : arguments[1];
+
+      return this.find(query, options).aggregate(function (docs) {
+        return docs.length;
+      });
     }
   }, {
     key: 'ids',
     value: function ids(query) {
-      // TODO
-
       var options = arguments.length <= 1 || arguments[1] === undefined ? {} : arguments[1];
+
+      return this.find(query, options).map(function (doc) {
+        return doc._id;
+      });
     }
   }]);
 
