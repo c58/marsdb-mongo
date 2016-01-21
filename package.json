@@ -26,7 +26,7 @@
   "dependencies": {
     "check-types": "^6.0.0",
     "invariant": "^2.2.0",
-    "marsdb": "^0.5.4",
+    "marsdb": "^0.5.5",
     "mongodb": "^2.1.4"
   },
   "devDependencies": {

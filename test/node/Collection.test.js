@@ -330,6 +330,27 @@ describe('Collection', () => {
       });
     });
 
+    it('should update multiple document', function () {
+      const db = new Collection('test');
+      return db.ensureIndex({fieldName: 'a'}).then(() => {
+        return db.insertAll([{a: 1}, {a: 2}, {a: 3}]);
+      }).then(() => {
+        return db.update({}, {$set: {a: 4}}, {multi: true});
+      }).then((result) => {
+        result.modified.should.be.equals(3);
+        result.updated[0].a.should.be.equals(4);
+        result.updated[1].a.should.be.equals(4);
+        result.updated[2].a.should.be.equals(4);
+        return db.find({a: 4});
+      }).then((result) => {
+        expect(result).to.be.an('array');
+        result.should.have.length(3);
+        result[0].a.should.be.equals(4);
+        result[1].a.should.be.equals(4);
+        result[2].a.should.be.equals(4);
+      });
+    });
+
     it('should emit events and can be quiet', function () {
       const db = new Collection('test');
       const cb = sinon.spy();
