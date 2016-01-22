@@ -9,7 +9,7 @@ chai.use(require('sinon-chai'));
 chai.should();
 
 
-describe('#find', function () {
+describe('DocumentMatcher', function () {
   beforeEach(function () {
     return getDb().then(db => db.dropDatabase());
   });
