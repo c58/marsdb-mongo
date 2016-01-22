@@ -1,1 +1,3 @@
-module.exports = require('./dist').default;
+module.exports = {
+  configure: require('./dist').configure,
+};
