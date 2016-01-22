@@ -13,6 +13,10 @@ var _checkTypes = require('check-types');
 
 var _checkTypes2 = _interopRequireDefault(_checkTypes);
 
+var _forEach = require('fast.js/forEach');
+
+var _forEach2 = _interopRequireDefault(_forEach);
+
 var _marsdb = require('marsdb');
 
 var _index = require('./index');
@@ -60,37 +64,51 @@ var MongoCursor = (function (_CursorObservable) {
       return _get(Object.getPrototypeOf(MongoCursor.prototype), 'find', this).call(this, queryObject);
     }
   }, {
+    key: 'sort',
+    value: function sort(objOrArr) {
+      var _this2 = this;
+
+      _get(Object.getPrototypeOf(MongoCursor.prototype), 'sort', this).call(this, objOrArr);
+      if (this._sorter) {
+        this._sort = [];
+        (0, _forEach2.default)(this._sorter._sortSpecParts, function (v) {
+          _this2._sort.push([v.path, v.ascending ? 'asc' : 'desc']);
+        });
+      }
+      return this;
+    }
+  }, {
     key: 'exec',
     value: function exec() {
-      var _this2 = this;
+      var _this3 = this;
 
       if (!this._executing) {
         this._executing = (0, _index.getDb)().then(function (db) {
-          var coll = db.collection(_this2.db.modelName);
-          var nativeCursor = coll.find(_this2._query);
+          var coll = db.collection(_this3.db.modelName);
+          var nativeCursor = coll.find(_this3._query);
 
-          if (_this2._skip !== undefined) {
-            nativeCursor.skip(_this2._skip);
+          if (_this3._skip !== undefined) {
+            nativeCursor.skip(_this3._skip);
           }
-          if (_this2._limit !== undefined) {
-            nativeCursor.limit(_this2._limit);
+          if (_this3._limit !== undefined) {
+            nativeCursor.limit(_this3._limit);
           }
-          if (_this2._sort) {
-            nativeCursor.sort(_this2._sort);
+          if (_this3._sort) {
+            nativeCursor.sort(_this3._sort);
           }
-          if (_this2._projector) {
-            nativeCursor.project(_this2._projector.fields);
+          if (_this3._projector) {
+            nativeCursor.project(_this3._projector.fields);
           }
 
-          if (_this2.options.count) {
+          if (_this3.options.count) {
             return nativeCursor.count();
           } else {
             return nativeCursor.toArray();
           }
         }).then(function (docs) {
-          return _this2.processPipeline(docs);
+          return _this3.processPipeline(docs);
         }).then(function (docs) {
-          _this2._executing = null;
+          _this3._executing = null;
           return docs;
         });
       }
