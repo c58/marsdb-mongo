@@ -78,42 +78,35 @@ var MongoCursor = (function (_CursorObservable) {
       return this;
     }
   }, {
-    key: 'exec',
-    value: function exec() {
+    key: '_doExec',
+    value: function _doExec() {
       var _this3 = this;
 
-      if (!this._executing) {
-        this._executing = (0, _index.getDb)().then(function (db) {
-          var coll = db.collection(_this3.db.modelName);
-          var nativeCursor = coll.find(_this3._query);
+      return (0, _index.getDb)().then(function (db) {
+        var coll = db.collection(_this3.db.modelName);
+        var nativeCursor = coll.find(_this3._query);
 
-          if (_this3._skip !== undefined) {
-            nativeCursor.skip(_this3._skip);
-          }
-          if (_this3._limit !== undefined) {
-            nativeCursor.limit(_this3._limit);
-          }
-          if (_this3._sort) {
-            nativeCursor.sort(_this3._sort);
-          }
-          if (_this3._projector) {
-            nativeCursor.project(_this3._projector.fields);
-          }
+        if (_this3._skip !== undefined) {
+          nativeCursor.skip(_this3._skip);
+        }
+        if (_this3._limit !== undefined) {
+          nativeCursor.limit(_this3._limit);
+        }
+        if (_this3._sort) {
+          nativeCursor.sort(_this3._sort);
+        }
+        if (_this3._projector) {
+          nativeCursor.project(_this3._projector.fields);
+        }
 
-          if (_this3.options.count) {
-            return nativeCursor.count();
-          } else {
-            return nativeCursor.toArray();
-          }
-        }).then(function (docs) {
-          return _this3.processPipeline(docs);
-        }).then(function (docs) {
-          _this3._executing = null;
-          return docs;
-        });
-      }
-
-      return this._executing;
+        if (_this3.options.count) {
+          return nativeCursor.count();
+        } else {
+          return nativeCursor.toArray();
+        }
+      }).then(function (docs) {
+        return _this3.processPipeline(docs);
+      });
     }
   }, {
     key: '_matchObjects',
