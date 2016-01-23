@@ -78,8 +78,8 @@ var MongoCursor = (function (_CursorObservable) {
       return this;
     }
   }, {
-    key: '_doExec',
-    value: function _doExec() {
+    key: 'exec',
+    value: function exec() {
       var _this3 = this;
 
       return (0, _index.getDb)().then(function (db) {
