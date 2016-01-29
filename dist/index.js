@@ -20,10 +20,6 @@ var _MongoCollectionDelegate = require('./MongoCollectionDelegate');
 
 var _MongoCollectionDelegate2 = _interopRequireDefault(_MongoCollectionDelegate);
 
-var _MongoCursor = require('./MongoCursor');
-
-var _MongoCursor2 = _interopRequireDefault(_MongoCursor);
-
 var _MongoIndexManager = require('./MongoIndexManager');
 
 var _MongoIndexManager2 = _interopRequireDefault(_MongoIndexManager);
@@ -52,7 +48,6 @@ function configure(_ref) {
   var url = _ref.url;
 
   _marsdb2.default.defaultDelegate(_MongoCollectionDelegate2.default);
-  _marsdb2.default.defaultCursorClass(_MongoCursor2.default);
   _marsdb2.default.defaultIndexManager(_MongoIndexManager2.default);
 
   (0, _invariant2.default)(_db === undefined, 'configure(...): database is already configured');

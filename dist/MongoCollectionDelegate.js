@@ -8,13 +8,15 @@ Object.defineProperty(exports, "__esModule", {
   value: true
 });
 
+var _DocumentModifier = require('marsdb/dist/DocumentModifier');
+
+var _DocumentModifier2 = _interopRequireDefault(_DocumentModifier);
+
 var _index = require('./index');
 
 var _MongoCursor = require('./MongoCursor');
 
-var _DocumentModifier = require('marsdb/dist/DocumentModifier');
-
-var _DocumentModifier2 = _interopRequireDefault(_DocumentModifier);
+var _MongoCursor2 = _interopRequireDefault(_MongoCursor);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -130,7 +132,7 @@ var MongoCollectionDelegate = (function () {
     value: function find(query) {
       var options = arguments.length <= 1 || arguments[1] === undefined ? {} : arguments[1];
 
-      return new this.db.cursorClass(this.db, query, options);
+      return new _MongoCursor2.default(this.db, query, options);
     }
   }, {
     key: 'findOne',

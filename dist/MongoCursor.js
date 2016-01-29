@@ -105,7 +105,7 @@ var MongoCursor = (function (_CursorObservable) {
           return nativeCursor.toArray();
         }
       }).then(function (docs) {
-        return _this3.processPipeline(docs);
+        return _this3._processPipeline(docs);
       });
     }
   }, {
