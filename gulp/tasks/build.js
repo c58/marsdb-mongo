@@ -1,6 +1,7 @@
 'use strict';
 
 var gulp = require('gulp');
+var babel = require('gulp-babel');
 var config = require('../config');
 var gulpif = require('gulp-if');
 var source = require('vinyl-source-stream');
