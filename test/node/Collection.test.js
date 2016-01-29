@@ -15,110 +15,12 @@ describe('Collection', () => {
     return getDb().then(db => db.dropDatabase());
   });
 
-  describe('#constructor', function () {
-    it('should accept second argument with options', function () {
-      class NewStorageManager {}
-      function new_id_generator() {}
-      class NewCursor {}
-
-      const db = new Collection('test', {
-        storageManager: NewStorageManager,
-        idGenerator: new_id_generator,
-        cursorClass: NewCursor,
-      });
-
-      db.storageManager.should.be.an.instanceof(NewStorageManager);
-      db.idGenerator.should.be.equal(new_id_generator);
-      db.cursorClass.should.be.equal(NewCursor);
-    });
-  });
-
-  describe('#create', function () {
-    it('should return the same object if it is an Object', function () {
-      const db = new Collection('test');
-      const raw = {a: 2, b: 3};
-      const doc = db.create(raw);
-      doc.should.be.equal(raw);
-    });
-
-    it('should make an object from string', function () {
-      const db = new Collection('test');
-      const doc = db.create('{"a": 2, "b": 3}');
-      doc.a.should.be.equal(2);
-      doc.b.should.be.equal(3);
-    });
-  });
-
-  describe('#defaultStorageManager', function () {
-    it('should return default in-memory StorageManager', function () {
-      Collection.defaultStorageManager().should.be.equal(StorageManager);
-    });
-    it('should set default storage manager', function () {
-      const oldStorage = Collection.defaultStorageManager();
-      class NewStorageManager {}
-      Collection.defaultStorageManager(NewStorageManager);
-      Collection.defaultStorageManager().should.be.equal(NewStorageManager);
-      Collection.defaultStorageManager(oldStorage);
-    });
-  });
-
-  describe('#defaultIdGenerator', function () {
-    it('should set default id generator', function () {
-      const oldGenerator = Collection.defaultIdGenerator();
-      function new_id_generator() {}
-      Collection.defaultIdGenerator(new_id_generator);
-      Collection.defaultIdGenerator().should.be.equal(new_id_generator);
-      Collection.defaultIdGenerator(oldGenerator);
-    });
-  });
-
-  describe('#defaultCursorClass', function () {
-    it('should return default MongoCursor', function () {
-      Collection.defaultCursorClass().should.be.equal(MongoCursor);
-    });
-    it('should set default Cursor class', function () {
-      const oldCursor = Collection.defaultCursorClass();
-      class NewCursor {}
-      Collection.defaultCursorClass(NewCursor);
-      Collection.defaultCursorClass().should.be.equal(NewCursor);
-      Collection.defaultCursorClass(oldCursor);
-    });
-  });
-
-  describe('#modelName', function () {
-    it('should return name of the model', function () {
-      const db = new Collection('test');
-      db.modelName.should.be.equal('test');
-    });
-  });
-
-
-  describe('#indexes', function () {
-    it('should return indexes object', function () {
-      const db = new Collection('test');
-      db.indexes.should.have.ownProperty('_id');
-    });
-  });
-
-
   describe('#storage', function () {
     it('should return storage', function () {
       const db = new Collection('test');
       db.storage.should.not.equals(undefined);
     });
   });
-
-
-  describe('#create', function () {
-    it('should create new document by raw', function () {
-      const db = new Collection('test');
-      const doc = db.create({a: 1, b: 2, c: {d: {e: 3}}});
-      doc.c.d.e.should.equals(3);
-      doc.a.should.equals(1);
-      doc.b.should.equals(2);
-    });
-  });
-
 
   describe('#insert', function () {
     it('should insert document and return new document id', function () {
