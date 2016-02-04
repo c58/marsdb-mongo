@@ -217,7 +217,9 @@ describe('Collection', () => {
       const cb = sinon.spy();
       db.on('sync:update', cb);
       db.update({}, {$set: {a: 1}}, {});
-      cb.should.have.callCount(1);
+      return Promise.resolve().then(() => {
+        cb.should.have.callCount(1);
+      })
     });
 
     it('should be quiet if options.quiet passed', function () {
@@ -225,7 +227,9 @@ describe('Collection', () => {
       const cb = sinon.spy();
       db.on('sync:update', cb);
       db.update({}, {$set: {a: 1}}, {quiet: true});
-      cb.should.have.callCount(0);
+      return Promise.resolve().then(() => {
+        cb.should.have.callCount(0);
+      })
     });
 
     it('should update index of a doucmnet', function () {
@@ -247,6 +251,37 @@ describe('Collection', () => {
       });
     });
   });
+
+  describe('#update - upsert', function () {
+    const db = new Collection('test');
+    const testUpsert = (query, mod, expected, expectedId) => {
+      it(`should upsert with ${JSON.stringify(query)} ${JSON.stringify(mod)},\n\textected ${JSON.stringify(expected)}`, function() {
+        return db.remove({}, {multi: true}).then(() => {
+          return db.update(query, mod, {upsert: true}).then((res) => {
+            res.modified.should.be.equals(1);
+            res.original.should.be.deep.equals([null]);
+            res.updated.should.have.length(1);
+            if (expectedId) {
+              res.updated[0]._id.should.be.equal(expectedId);
+            } else {
+              expect(res.updated[0]._id).to.have.length(17);
+            }
+            delete res.updated[0]._id;
+            res.updated[0].should.be.deep.equals(expected);
+          });
+        });
+      });
+    };
+
+    testUpsert({a: 2}, {$set: {b: 3}}, {a: 2, b: 3})
+    testUpsert({'a.b.c': 2}, {$set: {b: 3}}, {a: {b: {c: 2}}, b: 3})
+    testUpsert({'a.b.c': 2, _id: {$in: [1,2,3]}}, {$set: {b: 3}}, {a: {b: {c: 2}}, b: 3})
+    testUpsert({'a.b.c': 2, _id: 123}, {$set: {b: 3}}, {a: {b: {c: 2}}, b: 3}, 123)
+    // testUpsert({a: 2}, {b: 3}, {b: 3}) – NOT SUPPORTED with mongo
+    testUpsert({a: 2}, {$unset: {a: 1}}, {})
+    testUpsert({a: 2, _id: '123'}, {$setOnInsert: {a: 1, _id: '123'}}, {a: 1}, '123');
+  });
+
 
   describe('#findOne', function () {
     it('should find only one document', function () {

@@ -1,11 +1,11 @@
-import Cursor from '../../lib/MongoCursor';
+import { createCursor } from '../../lib/MongoCursor';
 import { getDb } from '../../lib';
 import { Random, Collection } from 'marsdb';
 import chai, {assert, expect} from 'chai';
 import _ from 'lodash';
+const Cursor = createCursor();
 chai.use(require('chai-as-promised'));
 chai.should();
-
 
 describe('Cursor', () => {
   let db;
