@@ -3,6 +3,9 @@
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
+
+var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
+
 exports.getDb = getDb;
 exports.configure = configure;
 
@@ -42,10 +45,13 @@ function getDb() {
  * Create a connection to the MongoDB and setup
  * MarsDB to work with this database
  * @param  {String} options.url
+ * @param  {Object} options.options
  * @return {Promise}
  */
 function configure(_ref) {
   var url = _ref.url;
+  var _ref$options = _ref.options;
+  var options = _ref$options === undefined ? {} : _ref$options;
 
   _marsdb2.default.defaultIndexManager(_MongoIndexManager2.default);
   _marsdb2.default.defaultDelegate((0, _MongoCollectionDelegate.createCollectionDelegate)());
@@ -53,11 +59,14 @@ function configure(_ref) {
 
   (0, _invariant2.default)(_db === undefined, 'configure(...): database is already configured');
 
-  _db = _mongodb.MongoClient.connect(url, {
-    db: { pkFactory: {
-        createPk: _idGenerator
-      } }
-  });
+  _db = _mongodb.MongoClient.connect(url, _extends({
+    db: { pkFactory: { createPk: _idGenerator } },
+    server: {
+      socketOptions: { autoReconnect: true },
+      reconnectTries: Infinity,
+      reconnectInterval: 2500
+    }
+  }, options));
 
   return _db;
 }

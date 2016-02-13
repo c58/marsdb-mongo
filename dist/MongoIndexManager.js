@@ -16,7 +16,7 @@ function _possibleConstructorReturn(self, call) { if (!self) { throw new Referen
 
 function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
 
-var MongoIndexManager = (function (_IndexManager) {
+var MongoIndexManager = function (_IndexManager) {
   _inherits(MongoIndexManager, _IndexManager);
 
   function MongoIndexManager() {
@@ -26,6 +26,6 @@ var MongoIndexManager = (function (_IndexManager) {
   }
 
   return MongoIndexManager;
-})(_IndexManager3.default);
+}(_IndexManager3.default);
 
 exports.default = MongoIndexManager;

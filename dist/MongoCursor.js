@@ -1,12 +1,13 @@
 'use strict';
 
-var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
-
-var _get = function get(object, property, receiver) { if (object === null) object = Function.prototype; var desc = Object.getOwnPropertyDescriptor(object, property); if (desc === undefined) { var parent = Object.getPrototypeOf(object); if (parent === null) { return undefined; } else { return get(parent, property, receiver); } } else if ("value" in desc) { return desc.value; } else { var getter = desc.get; if (getter === undefined) { return undefined; } return getter.call(receiver); } };
-
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+var _get = function get(object, property, receiver) { if (object === null) object = Function.prototype; var desc = Object.getOwnPropertyDescriptor(object, property); if (desc === undefined) { var parent = Object.getPrototypeOf(object); if (parent === null) { return undefined; } else { return get(parent, property, receiver); } } else if ("value" in desc) { return desc.value; } else { var getter = desc.get; if (getter === undefined) { return undefined; } return getter.call(receiver); } };
+
 exports.selectorIdToObject = selectorIdToObject;
 exports.createCursor = createCursor;
 
@@ -53,7 +54,7 @@ function selectorIdToObject(query) {
 function createCursor() {
   var _defaultCursor = _marsdb2.default.defaultCursor();
 
-  var MongoCursor = (function (_defaultCursor2) {
+  var MongoCursor = function (_defaultCursor2) {
     _inherits(MongoCursor, _defaultCursor2);
 
     function MongoCursor(db, query, options) {
@@ -90,6 +91,7 @@ function createCursor() {
         return (0, _index.getDb)().then(function (db) {
           var coll = db.collection(_this3.db.modelName);
           var nativeCursor = coll.find(_this3._query);
+          nativeCursor.maxTimeMS(2000);
 
           if (_this3._skip !== undefined) {
             nativeCursor.skip(_this3._skip);
@@ -121,7 +123,7 @@ function createCursor() {
     }]);
 
     return MongoCursor;
-  })(_defaultCursor);
+  }(_defaultCursor);
 
   return MongoCursor;
 }

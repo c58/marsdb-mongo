@@ -1,3 +1,3 @@
 module.exports = {
-  configure: require('./dist').configure,
+  configure: require('./dist').configure
 };
