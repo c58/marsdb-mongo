@@ -16,13 +16,13 @@ var _invariant = require('invariant');
 
 var _invariant2 = _interopRequireDefault(_invariant);
 
-var _MongoCollectionDelegate = require('./MongoCollectionDelegate');
-
-var _MongoCollectionDelegate2 = _interopRequireDefault(_MongoCollectionDelegate);
-
 var _MongoIndexManager = require('./MongoIndexManager');
 
 var _MongoIndexManager2 = _interopRequireDefault(_MongoIndexManager);
+
+var _MongoCollectionDelegate = require('./MongoCollectionDelegate');
+
+var _MongoCursor = require('./MongoCursor');
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -47,8 +47,9 @@ function getDb() {
 function configure(_ref) {
   var url = _ref.url;
 
-  _marsdb2.default.defaultDelegate(_MongoCollectionDelegate2.default);
   _marsdb2.default.defaultIndexManager(_MongoIndexManager2.default);
+  _marsdb2.default.defaultDelegate((0, _MongoCollectionDelegate.createCollectionDelegate)());
+  _marsdb2.default.defaultCursor((0, _MongoCursor.createCursor)());
 
   (0, _invariant2.default)(_db === undefined, 'configure(...): database is already configured');
 

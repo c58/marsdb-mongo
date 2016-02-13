@@ -8,6 +8,7 @@ Object.defineProperty(exports, "__esModule", {
   value: true
 });
 exports.selectorIdToObject = selectorIdToObject;
+exports.createCursor = createCursor;
 
 var _checkTypes = require('check-types');
 
@@ -18,6 +19,8 @@ var _forEach = require('fast.js/forEach');
 var _forEach2 = _interopRequireDefault(_forEach);
 
 var _marsdb = require('marsdb');
+
+var _marsdb2 = _interopRequireDefault(_marsdb);
 
 var _index = require('./index');
 
@@ -45,77 +48,80 @@ function selectorIdToObject(query) {
 
 /**
  * Wrapper around of native mongodb cursor, based
- * on marsdb observable cursor.
+ * on marsdb default cursor.
  */
+function createCursor() {
+  var _defaultCursor = _marsdb2.default.defaultCursor();
 
-var MongoCursor = (function (_CursorObservable) {
-  _inherits(MongoCursor, _CursorObservable);
+  var MongoCursor = (function (_defaultCursor2) {
+    _inherits(MongoCursor, _defaultCursor2);
 
-  function MongoCursor(db, query, options) {
-    _classCallCheck(this, MongoCursor);
+    function MongoCursor(db, query, options) {
+      _classCallCheck(this, MongoCursor);
 
-    return _possibleConstructorReturn(this, Object.getPrototypeOf(MongoCursor).call(this, db, selectorIdToObject(query), options));
-  }
-
-  _createClass(MongoCursor, [{
-    key: 'find',
-    value: function find(query) {
-      var queryObject = selectorIdToObject(query);
-      return _get(Object.getPrototypeOf(MongoCursor.prototype), 'find', this).call(this, queryObject);
+      return _possibleConstructorReturn(this, Object.getPrototypeOf(MongoCursor).call(this, db, selectorIdToObject(query), options));
     }
-  }, {
-    key: 'sort',
-    value: function sort(objOrArr) {
-      var _this2 = this;
 
-      _get(Object.getPrototypeOf(MongoCursor.prototype), 'sort', this).call(this, objOrArr);
-      if (this._sorter) {
-        this._sort = [];
-        (0, _forEach2.default)(this._sorter._sortSpecParts, function (v) {
-          _this2._sort.push([v.path, v.ascending ? 'asc' : 'desc']);
+    _createClass(MongoCursor, [{
+      key: 'find',
+      value: function find(query) {
+        var queryObject = selectorIdToObject(query);
+        return _get(Object.getPrototypeOf(MongoCursor.prototype), 'find', this).call(this, queryObject);
+      }
+    }, {
+      key: 'sort',
+      value: function sort(objOrArr) {
+        var _this2 = this;
+
+        _get(Object.getPrototypeOf(MongoCursor.prototype), 'sort', this).call(this, objOrArr);
+        if (this._sorter) {
+          this._sort = [];
+          (0, _forEach2.default)(this._sorter._sortSpecParts, function (v) {
+            _this2._sort.push([v.path, v.ascending ? 'asc' : 'desc']);
+          });
+        }
+        return this;
+      }
+    }, {
+      key: '_doExecute',
+      value: function _doExecute() {
+        var _this3 = this;
+
+        return (0, _index.getDb)().then(function (db) {
+          var coll = db.collection(_this3.db.modelName);
+          var nativeCursor = coll.find(_this3._query);
+
+          if (_this3._skip !== undefined) {
+            nativeCursor.skip(_this3._skip);
+          }
+          if (_this3._limit !== undefined) {
+            nativeCursor.limit(_this3._limit);
+          }
+          if (_this3._sort) {
+            nativeCursor.sort(_this3._sort);
+          }
+          if (_this3._projector) {
+            nativeCursor.project(_this3._projector.fields);
+          }
+
+          if (_this3.options.count) {
+            return nativeCursor.count();
+          } else {
+            return nativeCursor.toArray();
+          }
+        }).then(function (docs) {
+          return _this3._processPipeline(docs);
         });
       }
-      return this;
-    }
-  }, {
-    key: '_doExecute',
-    value: function _doExecute() {
-      var _this3 = this;
+    }, {
+      key: '_matchObjects',
+      value: function _matchObjects() {
+        // do nothing
+      }
+    }]);
 
-      return (0, _index.getDb)().then(function (db) {
-        var coll = db.collection(_this3.db.modelName);
-        var nativeCursor = coll.find(_this3._query);
-
-        if (_this3._skip !== undefined) {
-          nativeCursor.skip(_this3._skip);
-        }
-        if (_this3._limit !== undefined) {
-          nativeCursor.limit(_this3._limit);
-        }
-        if (_this3._sort) {
-          nativeCursor.sort(_this3._sort);
-        }
-        if (_this3._projector) {
-          nativeCursor.project(_this3._projector.fields);
-        }
-
-        if (_this3.options.count) {
-          return nativeCursor.count();
-        } else {
-          return nativeCursor.toArray();
-        }
-      }).then(function (docs) {
-        return _this3._processPipeline(docs);
-      });
-    }
-  }, {
-    key: '_matchObjects',
-    value: function _matchObjects() {
-      // do nothing
-    }
-  }]);
+    return MongoCursor;
+  })(_defaultCursor);
 
   return MongoCursor;
-})(_marsdb.CursorObservable);
-
-exports.default = MongoCursor;
+}
